@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  version: 0.1.0
+  title: iban-generator
+  description: The spec for generating ibans.
+  license:
+    name: MIT
+paths:
+  /v1/random:
+    get:
+      description: Return a generated iban.
+      summary: Generate an iban.
+      operationId: random
+      parameters:
+      - name: bic
+        in: query
+        required: false
+        description: The BIC to use for generation.
+        schema:
+          type: string
+          example: COBADEFF3701
+      - name: bankCode
+        in: query
+        required: false
+        description: The bank code to use for generation.
+        schema:
+          type: string
+          example: 1009000
+      - name: countryCode
+        in: query
+        required: false
+        description: The country code to use.
+        schema:
+          type: string
+          example: DE
+      responses:
+        "200":
+          description: Information about a specific bank.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IBANGeneration'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /v1/bics:
+    get:
+      description: The supported BICs.
+      summary: The by the generator supported BICs. 
+      operationId: bics
+      parameters:
+      - name: countryCode
+        in: query
+        required: false
+        description: Return only BICs for the country code.
+        schema:
+          type: string
+          example: DE
+      responses:
+        "200":
+          description: Validation information for the given IBAN.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BIC'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /v1/countryCodes:
+    get:
+      description: The supported country codes.
+      summary: The by the generator country codes.
+      operationId: countryCodes
+      responses:
+        "200":
+          description: The by the generator supported country codes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+components:
+  schemas:
+    BIC:
+      description: The details BIC.
+      properties:
+        bic:
+          type: string
+        countryCode:
+          type: string
+      required:
+      - bic
+      - countryCode
+    IBANGeneration:
+      description: The details of a generated iban.
+      properties:
+        iban:
+          type: string
+        bic:
+          type: string
+        bankcode:
+          type: string
+      required:
+      - iban
+      - bankcode
+    Error:
+      description: An error response.
+      properties:
+        error:
+          type: string
+      required:
+      - error
+  responses:
+    ErrorResponse:
+      description: An error response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
