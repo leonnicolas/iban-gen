@@ -79,7 +79,7 @@ func (s *server) Random(w http.ResponseWriter, r *http.Request, params v1.Random
 	return func(w http.ResponseWriter, r *http.Request) {
 		var i *iban.IBAN
 		var err error
-		if params.Bic != nil {
+		if params.Bic != nil && *params.Bic != "" {
 			bc, ok := s.bicsRepo.BankCode(*params.Bic)
 			if !ok {
 				s.httpError(w, "unknown bic", http.StatusNotFound)
@@ -91,7 +91,7 @@ func (s *server) Random(w http.ResponseWriter, r *http.Request, params v1.Random
 				return
 
 			}
-		} else if params.BankCode != nil {
+		} else if params.BankCode != nil && *params.BankCode != "" {
 			i, err = iban.GenerateFromBankCode(iban.CountryCodeDE, *params.BankCode)
 			if err != nil {
 				s.httpError(w, err.Error(), http.StatusInternalServerError)
