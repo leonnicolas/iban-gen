@@ -86,6 +86,7 @@ components:
   schemas:
     BIC:
       description: The details BIC.
+      type: object
       properties:
         bic:
           type: string
@@ -96,6 +97,7 @@ components:
       - countryCode
     IBANGeneration:
       description: The details of a generated iban.
+      type: object
       properties:
         iban:
           type: string
@@ -108,6 +110,7 @@ components:
       - bankcode
     Error:
       description: An error response.
+      type: object
       properties:
         error:
           type: string
@@ -116,7 +119,9 @@ components:
   responses:
     ErrorResponse:
       description: An error response.
+      type: object
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+
