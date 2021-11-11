@@ -12,6 +12,7 @@ import (
 
 type BIC struct {
 	CountryCode iban.CountryCode
+	Bank        string
 	BankCode    string
 	BIC         string
 }
@@ -58,9 +59,11 @@ func (re *BICRepo) Populate(r io.Reader) (int, error) {
 		runeVal := []rune(l)
 		bc := strings.TrimSpace(string(runeVal[0:8]))
 		bic := strings.TrimSpace(string(runeVal[139:150]))
+		name := strings.TrimSpace(string(runeVal[9:67]))
 		re.bics[strings.Trim(bic, " ")] = BIC{
 			CountryCode: iban.CountryCodeDE,
 			BIC:         bic,
+			Bank:        name,
 			BankCode:    bc,
 		}
 		c++

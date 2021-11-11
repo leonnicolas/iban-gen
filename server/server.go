@@ -94,7 +94,7 @@ func (s *server) Random(w http.ResponseWriter, r *http.Request, params v1.Random
 		} else if params.BankCode != nil && *params.BankCode != "" {
 			i, err = iban.GenerateFromBankCode(iban.CountryCodeDE, *params.BankCode)
 			if err != nil {
-				s.httpError(w, err.Error(), http.StatusInternalServerError)
+				s.httpError(w, err.Error(), http.StatusBadRequest)
 				return
 
 			}
@@ -126,6 +126,7 @@ func (s *server) Bics(w http.ResponseWriter, r *http.Request, params v1.BicsPara
 			res[i] = v1.BIC{
 				CountryCode: string(v.CountryCode),
 				Bic:         v.BIC,
+				Bank:        v.Bank,
 			}
 		}
 		w.Header().Set("Content-Type", "application/json")

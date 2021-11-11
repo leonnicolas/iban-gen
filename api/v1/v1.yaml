@@ -92,9 +92,12 @@ components:
           type: string
         countryCode:
           type: string
+        bank:
+          type: string
       required:
       - bic
       - countryCode
+      - bank
     IBANGeneration:
       description: The details of a generated iban.
       type: object
