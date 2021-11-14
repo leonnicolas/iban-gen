@@ -2,7 +2,7 @@
 
 ## Hosted Version
 
-The backend is hosted on [iban-gen.klump.solutions](https://iban-gen.klump.solutions) right now.
+The backend is hosted on [iban-gen.duckdns.org](https://iban-gen.duckdns.org) right now.
 
 ## API
 
