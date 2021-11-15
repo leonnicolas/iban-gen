@@ -7,17 +7,17 @@ The backend is hosted on [iban-gen.duckdns.org](https://iban-gen.duckdns.org) ri
 ## API
 
 ```shell
-`curl https://iban-gen.duckdns.org/v1/random
+curl https://iban-gen.duckdns.org/v1/random
 ```
 or
 ```shell
-`curl https://iban-gen.duckdns.org/v1/random?bankCode=1009000
+curl https://iban-gen.duckdns.org/v1/random?bankCode=1009000
 ```
 or
 ```shell
-`curl https://iban-gen.duckdns.org/v1/random?bic=BEVODEBBXXX
+curl https://iban-gen.duckdns.org/v1/random?bic=BEVODEBBXXX
 ```
-Check all awailable BICs with
+Check all available BICs with
 ```shell
-`curl https://iban-gen.duckdns.org/v1/bics
+curl https://iban-gen.duckdns.org/v1/bics
 ```
