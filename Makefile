@@ -1,5 +1,5 @@
 export GO111MODULE=on
-.PHONY: build migrate fmt lint lint-openapi mock vendor push container clean container-name container-latest push-latest manifest manfest-latest manifest-annotate manifest manfest-latest manifest-annotate 
+.PHONY: build migrate fmt lint lint-openapi mock vendor push container clean container-name container-latest push-latest manifest manfest-latest manifest-annotate manifest manfest-latest manifest-annotate test
 
 
 OS ?= $(shell go env GOOS)
@@ -26,12 +26,12 @@ DIRTY := $(shell test -z "$$(git diff --shortstat 2>/dev/null)" || echo -dirty)
 VERSION := $(VERSION)$(DIRTY)
 LD_FLAGS := -ldflags "-s -w -X $(PKG)/version.Version=$(VERSION)"
 SRC := $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+BANK_DATA := $(shell find . -type f -wholename "./data/*")
 GO_FILES ?= $$(find . -name '*.go' -not -path './vendor/*')
 GO_PKGS ?= $$(go list ./... | grep -v "$(PKG)/vendor")
 
 GOLINT_BINARY := $(BIN_DIR)/golint
 OAPI_CODEGEN_BINARY := $(BIN_DIR)/oapi-codegen
-STATIK_BINARY := $(BIN_DIR)/statik
 
 BUILD_IMAGE ?= golang:1.17.2-alpine3.14
 BASE_IMAGE ?= scratch
@@ -49,7 +49,7 @@ endif
 
 build: $(BINS)
 
-$(BINS): $(SRC) go.mod
+$(BINS): $(SRC) go.mod cmd/iban-gen/data
 	@mkdir -p $(BIN_DIR)/$(word 2,$(subst /, ,$@))/$(word 3,$(subst /, ,$@))
 	@echo "building: $@"
 	@$(BUILD_PREFIX) \
@@ -64,6 +64,10 @@ $(BINS): $(SRC) go.mod
 
 $(BIN_DIR):
 	mkdir -p $@
+
+cmd/iban-gen/data: $(BANK_DATA)
+	rm -r $@ || true
+	cp -r $(<D) $@
 
 container-latest-%:
 	@$(MAKE) --no-print-directory ARCH=$* container-latest
@@ -159,9 +163,6 @@ push-name:
 api/v1/v1.go: api/v1/v1.yaml $(OAPI_CODEGEN_BINARY)
 	$(OAPI_CODEGEN_BINARY) -generate types,client,chi-server,spec -package v1 -o $@ $<
 
-statik/statik.go: data/bundesbank.txt $(STATIK_BINARY)
-	$(STATIK_BINARY) --src data -f
-
 fmt:
 	@echo $(GO_PKGS)
 	gofmt -w -s $(GO_FILES)
@@ -195,6 +196,9 @@ lint: $(GOLINT_BINARY) lint-openapi
 lint-openapi:
 	docker run --rm -v $$(pwd):/var/lib/iban-gen stoplight/spectral:5.9 lint /var/lib/iban-gen/api/v1/v1.yaml
 
+test: cmd/iban-gen/data
+	go test ./...
+
 vendor:
 	go mod tidy
 	go mod vendor
@@ -207,9 +211,6 @@ $(OAPI_CODEGEN_BINARY): | $(BIN_DIR)
 
 $(GOLINT_BINARY):
 	go build -mod=vendor -o $@ golang.org/x/lint/golint
-
-$(STATIK_BINARY):
-	go build -mod=vendor -o $@ github.com/rakyll/statik
 
 clean: container-clean bin-clean
 	rm -rf .cache
