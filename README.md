@@ -13,7 +13,7 @@ curl https://iban-gen.duckdns.org/v1/random
 ```
 or
 ```shell
-curl https://iban-gen.duckdns.org/v1/random?bankCode=1009000
+curl https://iban-gen.duckdns.org/v1/random?bankCode=01009000
 ```
 or
 ```shell

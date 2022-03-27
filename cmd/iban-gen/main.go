@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"flag"
 	"fmt"
 	stdlog "log"
@@ -19,12 +20,10 @@ import (
 	"github.com/metalmatze/signal/internalserver"
 	"github.com/oklog/run"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/rakyll/statik/fs"
 
 	v1 "github.com/leonnicolas/iban-gen/api/v1"
 	"github.com/leonnicolas/iban-gen/bic"
 	"github.com/leonnicolas/iban-gen/server"
-	_ "github.com/leonnicolas/iban-gen/statik"
 	"github.com/leonnicolas/iban-gen/version"
 )
 
@@ -38,7 +37,12 @@ const (
 
 	logFmtJson = "json"
 	logFmtFmt  = "fmt"
+
+	bundesbankFile = "data/bundesbank.txt"
 )
+
+//go:embed data/*
+var bankData embed.FS
 
 var (
 	availableLogLevels = strings.Join([]string{
@@ -135,11 +139,7 @@ func Main() error {
 				return http.HandlerFunc(fn)
 			})
 			bicsRepo := bic.NewBICRepo()
-			statikFS, err := fs.New()
-			if err != nil {
-				return err
-			}
-			f, err := statikFS.Open("/bundesbank.txt")
+			f, err := bankData.Open(bundesbankFile)
 			if err != nil {
 				return err
 			}
@@ -149,7 +149,7 @@ func Main() error {
 				return err
 			}
 			level.Info(logger).Log("msg", "loaded BIC data", "entries", i)
-			//level.Debug(logger).Log("msg", "loaded BIC data", "count", i, "entries", bicsRepo.BICs())
+			// level.Debug(logger).Log("msg", "loaded BIC data", "count", i, "entries", bicsRepo.BICs())
 			s := server.NewInstrumentedServerWithLogger(
 				bicsRepo,
 				prometheus.WrapRegistererWith(prometheus.Labels{"api": "v1"}, reg),

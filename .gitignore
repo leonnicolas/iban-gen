@@ -4,3 +4,4 @@ bin
 .container-*
 .push-*
 .manifest-*
+cmd/iban-gen/data
