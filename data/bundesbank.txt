@@ -15455,4 +15455,4 @@
 870962142Volksbank Chemnitz                                        08309Eibenstock                         Volksbank Chemnitz         98040           06056348U000000000
 870962142Volksbank Chemnitz                                        09474Crottendorf                        Volksbank Chemnitz         98040           06056351U000000000
 870962142Volksbank Chemnitz                                        09423Gelenau                            Volksbank Chemnitz         98040           06056352U000000000
-200110010Connybank                                                10999Berlin                             Connybank                        CONNYXXXXX                   
+200110010Connybank                                                 10999Berlin                             Connybank                        CONNYXXXXX                  
