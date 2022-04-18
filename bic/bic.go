@@ -10,35 +10,41 @@ import (
 	"github.com/leonnicolas/iban-gen/iban"
 )
 
-type BIC struct {
+// Bank represents a bank.
+type Bank struct {
 	CountryCode iban.CountryCode
 	Bank        string
 	BankCode    string
 	BIC         string
 }
 
-type BICRepo struct {
-	bics map[string]BIC
+// BankRepo contains Banks and enables queries.
+type BankRepo struct {
+	bics map[string]Bank
 }
 
-func NewBICRepo() *BICRepo {
-	return &BICRepo{}
+// NewBICRepo returns a new BankRepo
+func NewBICRepo() *BankRepo {
+	return &BankRepo{}
 }
 
-func (re *BICRepo) BICs() []BIC {
-	ret := make([]BIC, 0, len(re.bics))
+// BICs returns all BICs of the BankRepo.
+func (re *BankRepo) BICs() []Bank {
+	ret := make([]Bank, 0, len(re.bics))
 	for _, v := range re.bics {
 		ret = append(ret, v)
 	}
 	return ret
 }
 
-func (re *BICRepo) BankCode(bic string) (string, bool) {
+// BankCode returns the BankCode of the bank of the given BIC.
+func (re *BankRepo) BankCode(bic string) (string, bool) {
 	b, ok := re.bics[bic]
 	return b.BankCode, ok
 }
 
-func (re *BICRepo) PopulateFromFile(path string) (int, error) {
+// PopulateFromFile populates the BankRepo from a file.
+func (re *BankRepo) PopulateFromFile(path string) (int, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return 0, err
@@ -46,9 +52,10 @@ func (re *BICRepo) PopulateFromFile(path string) (int, error) {
 	return re.Populate(f)
 }
 
-func (re *BICRepo) Populate(r io.Reader) (int, error) {
+// Populate populates the BankRepo from a io.Reader.
+func (re *BankRepo) Populate(r io.Reader) (int, error) {
 	if re.bics == nil {
-		re.bics = make(map[string]BIC)
+		re.bics = make(map[string]Bank)
 	}
 	s := bufio.NewReader(r)
 	c := 0
@@ -60,7 +67,7 @@ func (re *BICRepo) Populate(r io.Reader) (int, error) {
 		bc := strings.TrimSpace(string(runeVal[0:8]))
 		bic := strings.TrimSpace(string(runeVal[139:150]))
 		name := strings.TrimSpace(string(runeVal[9:67]))
-		re.bics[strings.Trim(bic, " ")] = BIC{
+		re.bics[strings.Trim(bic, " ")] = Bank{
 			CountryCode: iban.CountryCodeDE,
 			BIC:         bic,
 			Bank:        name,

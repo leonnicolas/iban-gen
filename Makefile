@@ -33,7 +33,7 @@ GO_PKGS ?= $$(go list ./... | grep -v "$(PKG)/vendor")
 GOLINT_BINARY := $(BIN_DIR)/golint
 OAPI_CODEGEN_BINARY := $(BIN_DIR)/oapi-codegen
 
-BUILD_IMAGE ?= golang:1.17.2-alpine3.14
+BUILD_IMAGE ?= golang:1.18.0
 BASE_IMAGE ?= scratch
 CONTAINERIZE_BUILD ?= true
 BUILD_SUFIX :=

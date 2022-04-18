@@ -47,6 +47,9 @@ type ErrorResponse Error
 type BicsParams struct {
 	// Return only BICs for the country code.
 	CountryCode *string `json:"countryCode,omitempty"`
+
+	// Return only BICs that match the bank name and sort them with levenshtein distance.
+	Bank *string `json:"bank,omitempty"`
 }
 
 // RandomParams defines parameters for Random.
@@ -204,6 +207,22 @@ func NewBicsRequest(server string, params *BicsParams) (*http.Request, error) {
 	if params.CountryCode != nil {
 
 		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "countryCode", runtime.ParamLocationQuery, *params.CountryCode); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Bank != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "bank", runtime.ParamLocationQuery, *params.Bank); err != nil {
 			return nil, err
 		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 			return nil, err
@@ -624,6 +643,18 @@ func (siw *ServerInterfaceWrapper) Bics(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// ------------- Optional query parameter "bank" -------------
+	if paramValue := r.URL.Query().Get("bank"); paramValue != "" {
+
+	}
+
+	err = runtime.BindQueryParameter("form", true, false, "bank", r.URL.Query(), &params.Bank)
+	if err != nil {
+		err = fmt.Errorf("Invalid format for parameter bank: %w", err)
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{err})
+		return
+	}
+
 	var handler = func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Bics(w, r, params)
 	}
@@ -785,18 +816,19 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"WoUTeD+zd4NwyHfWbJqm+RMAAP//LCtfZ10KAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
