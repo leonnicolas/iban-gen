@@ -35,7 +35,7 @@ const (
 	logLevelError = "error"
 	logLevelNone  = "none"
 
-	logFmtJson = "json"
+	logFmtJSON = "json"
 	logFmtFmt  = "fmt"
 
 	bundesbankFile = "data/bundesbank.txt"
@@ -55,7 +55,7 @@ var (
 	}, ", ")
 
 	availableLogFmts = strings.Join([]string{
-		logFmtJson,
+		logFmtJSON,
 		logFmtFmt,
 	}, ",")
 )
@@ -84,7 +84,7 @@ func Main() error {
 
 	var logger log.Logger
 	switch *logFmt {
-	case logFmtJson:
+	case logFmtJSON:
 		logger = log.NewJSONLogger(log.NewSyncWriter(os.Stdout))
 	case logFmtFmt:
 		logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stdout))
