@@ -2,24 +2,24 @@
 
 ## Hosted Version
 
-The backend is hosted on [iban-gen.duckdns.org](https://iban-gen.duckdns.org) right now.
+The backend is hosted on [ibans.es.klump.solutions](https://ibans.es.klump.solutions) right now.
 
 A frontend is hosted on [iban-gen.klump.solutions](https://iban-gen.klump.solutions).
 
 ## API
 
 ```shell
-curl https://iban-gen.duckdns.org/v1/random
+curl https://ibans.es.klump.solutions/v1/random
 ```
 or
 ```shell
-curl https://iban-gen.duckdns.org/v1/random?bankCode=01009000
+curl https://ibans.es.klump.solutions/v1/random?bankCode=01009000
 ```
 or
 ```shell
-curl https://iban-gen.duckdns.org/v1/random?bic=BEVODEBBXXX
+curl https://ibans.es.klump.solutions/v1/random?bic=BEVODEBBXXX
 ```
 Check all available BICs with
 ```shell
-curl https://iban-gen.duckdns.org/v1/bics
+curl https://ibans.es.klump.solutions/v1/bics
 ```
